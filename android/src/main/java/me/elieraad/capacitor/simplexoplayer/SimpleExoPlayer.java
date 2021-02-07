@@ -1,5 +1,6 @@
 package me.elieraad.capacitor.simplexoplayer;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.getcapacitor.JSObject;
@@ -14,6 +15,8 @@ import org.json.JSONObject;
 @NativePlugin
 public class SimpleExoPlayer extends Plugin {
 
+    private static final String EVENT_EXOPLAYER_STATE_CHANGE = "onPlaybackStateChange";
+
     private String TAG = "SimpleExoPlayer";
     private CapacitorExoPlayer player;
 
@@ -21,7 +24,7 @@ public class SimpleExoPlayer extends Plugin {
     public void load(PluginCall call) {
         String src = call.getString("src");
         Log.i(TAG, String.format("loading src: %s", src));
-        player = new CapacitorExoPlayer(getContext(), src);
+        player = new CapacitorExoPlayer(this, src);
     }
 
     @PluginMethod
@@ -69,5 +72,12 @@ public class SimpleExoPlayer extends Plugin {
     public void release(PluginCall call) {
         Log.i(TAG, "releasing sound now");
         player.release();
+    }
+
+    public void emitEvent(PlaybackState state) {
+        JSObject ret = new JSObject();
+        ret.put("state", state);
+        Log.i(TAG, String.format("Event %s detected, State: %s", EVENT_EXOPLAYER_STATE_CHANGE, state));
+        notifyListeners(EVENT_EXOPLAYER_STATE_CHANGE, ret, true);
     }
 }
