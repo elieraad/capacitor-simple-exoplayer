@@ -1,3 +1,8 @@
 export interface SimpleExoPlayerPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
+  load(options: {src: string}): void;
+  play(): void;
+  pause(): void;
+  seek(options?: {value: number}): Promise<number>;
+  duration(): Promise<number>;
+  release(): void;
 }
